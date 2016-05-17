@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="russmca"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+        xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+
+
+    <!-- Multiroom Zone Channel -->
+    <channel-group-type id="systemChannelGroup">
+        <label>System</label>
+        <description>The multiroom System</description>
+        <channels>
+            <channel id="controllerType" typeId="controllerTypeChannel" />
+            <channel id="allZonesPower" typeId="allZonesPowerChannel" />
+        </channels>
+    </channel-group-type>    
+    <channel-group-type id="zoneChannelGroup">
+        <label>Multiroom Zone</label>
+        <description>The multiroom Zone</description>
+        <channels>
+            <channel id="name" typeId="zoneNameChannel" />
+            <channel id="currentSource" typeId="currentSourceChannel" />
+            
+            <channel id="volumeDimmer" typeId="volumeChannelDimmer" />
+            <channel id="volumeAbsolute" typeId="volumeChannelAbs" />
+
+            <channel id="bassDimmer" typeId="bassChannelDimmer" />
+            <channel id="bassAbsolute" typeId="bassChannelAbs" />
+            
+            <channel id="trebleDimmer" typeId="trebleChannelDimmer" />
+            <channel id="trebleAbsolute" typeId="trebleChannelAbs" />
+            
+            <channel id="balanceDimmer" typeId="balanceChannelDimmer" />
+            <channel id="balanceAbsolute" typeId="balanceChannelAbs" />
+            
+            <channel id="turnOnVolumeDimmer" typeId="turnOnVolumeChannelDimmer" />
+            <channel id="turnOnVolumeAbsolute" typeId="turnOnVolumeChannelAbs" />
+
+            <channel id="power" typeId="powerChannel" />
+            <channel id="mute" typeId="muteChannel" />
+            <channel id="loudness" typeId="loudnessChannel" />
+
+            <channel id="dnd" typeId="dndChannel" />
+            <channel id="partyMode" typeId="partyModeChannel" />
+            <channel id="sharedSource" typeId="sharedSourceChannel" />
+            <channel id="page" typeId="pageChannel" />
+            <channel id="sleepTimeRemaining" typeId="sleepTimeRemainingChannel" />
+        </channels>
+    </channel-group-type>
+    <channel-group-type id="sourceChannelGroup">
+        <label>Multiroom Source</label>
+        <description>The multiroom Source</description>
+        <channels>
+            <channel id="type" typeId="sourceTypeChannel" />
+            <channel id="name" typeId="sourceNameChannel" />
+
+            <channel id="composerName" typeId="sourceComposerNameChannel" />
+            <channel id="channelName" typeId="sourceChannelNameChannel" />
+            <channel id="genre" typeId="sourceGenreChannel" />
+            <channel id="artistName" typeId="sourceArtistNameChannel" />
+            <channel id="albumName" typeId="sourceAlbumNameChannel" />
+            <channel id="playlistName" typeId="sourcePlaylistChannel" />
+            <channel id="songName" typeId="sourceSongNameChannel" />
+            <channel id="coverArtURL" typeId="sourceCoverArtURLChannel" />
+            <channel id="channel" typeId="sourceChannelChannel" />
+            <channel id="programServiceName" typeId="sourceProgramServiceNameChannel" />
+            <channel id="radioText" typeId="sourceRadioTextChannel" />
+            <channel id="radioText2" typeId="sourceRadioTextChannel" />
+            <channel id="radioText3" typeId="sourceRadioTextChannel" />
+            <channel id="radioText4" typeId="sourceRadioTextChannel" />
+            <channel id="shuffleMode" typeId="sourceShuffleModeChannel" />
+            <channel id="repeatMode" typeId="sourceRepeatModeChannel" />
+
+        </channels>
+    </channel-group-type>
+    
+    <channel-type id="controllerTypeChannel">
+        <item-type>String</item-type>
+        <label>Controller Type</label>
+        <description>The controller type (i.e. model)</description>
+    </channel-type>
+    <channel-type id="allZonesPowerChannel">
+        <item-type>Switch</item-type>
+        <label>Power all</label>
+        <description>Turns all zones on/off</description>
+        <category>Switch</category>
+    </channel-type>
+    
+    <channel-type id="zoneNameChannel">
+        <item-type>String</item-type>
+        <label>Zone Name</label>
+        <description>Name of the specified zone</description>
+    </channel-type>
+    
+    <channel-type id="currentSourceChannel">
+        <item-type>Number</item-type>
+        <label>Current Source</label>
+        <description>Current physical Source selection for the zone</description>
+    </channel-type>
+    
+    <channel-type id="volumeChannelDimmer">
+        <item-type>Dimmer</item-type>
+        <label>Volume</label>
+        <description>Increase/Decrease the volume (%)</description>
+        <category>SoundVolume</category>
+    </channel-type>
+
+    <channel-type id="volumeChannelAbs" advanced="true">
+        <item-type>Number</item-type>
+        <label>Volume</label>
+        <description>Set the volume level</description>
+        <category>SoundVolume</category>
+        <state min="0" max="50" step="1" pattern="%d" />
+    </channel-type>
+        
+    <channel-type id="bassChannelDimmer">
+        <item-type>Dimmer</item-type>
+        <label>Bass</label>
+        <description>Bass settings for zone</description>
+    </channel-type>
+    <channel-type id="bassChannelAbs">
+        <item-type>Number</item-type>
+        <label>Bass</label>
+        <description>Bass settings for zone</description>
+        <state min="-10" max="10" step="1"/>
+    </channel-type>
+
+
+    <channel-type id="trebleChannelDimmer">
+        <item-type>Dimmer</item-type>
+        <label>Treble</label>
+        <description>Treble settings for zone</description>
+    </channel-type>
+    <channel-type id="trebleChannelAbs">
+        <item-type>Number</item-type>
+        <label>Treble</label>
+        <description>Treble settings for zone</description>
+        <state min="-10" max="10" step="1"/>
+    </channel-type>
+    
+    <channel-type id="balanceChannelDimmer">
+        <item-type>Dimmer</item-type>
+        <label>Balance</label>
+        <description>Balance settings for zone</description>
+    </channel-type>
+    <channel-type id="balanceChannelAbs">
+        <item-type>Number</item-type>
+        <label>Balance</label>
+        <description>Balance settings for zone</description>
+        <state min="-10" max="10" step="1"/>
+    </channel-type>
+
+    <channel-type id="turnOnVolumeChannelDimmer">
+        <item-type>Dimmer</item-type>
+        <label>TurnOnVolume</label>
+        <description>TurnOnVolume settings for zone</description>
+    </channel-type>
+    <channel-type id="turnOnVolumeChannelAbs">
+        <item-type>Number</item-type>
+        <label>TurnOnVolume</label>
+        <description>Turn On Volume setting for the zone</description>
+        <state min="0" max="50" step="1"/>
+    </channel-type>
+    
+    <channel-type id="powerChannel">
+        <item-type>Switch</item-type>
+        <label>Power</label>
+        <description>Turns on/off Zone</description>
+        <category>Switch</category>
+    </channel-type>
+    
+    <channel-type id="muteChannel">
+        <item-type>Switch</item-type>
+        <label>Mute</label>
+        <description>Mute on/off Zone</description>
+        <category>Switch</category>
+    </channel-type>
+
+     <channel-type id="loudnessChannel">
+        <item-type>Switch</item-type>
+        <label>Loudness</label>
+        <description>Loudness setting for the zone</description>
+        <category>Switch</category>
+    </channel-type>
+  
+     <channel-type id="dndChannel">
+        <item-type>String</item-type>
+        <label>Do Not Disturb</label>
+        <description>Do Not Disturb setting for the zone</description>
+        <state>
+            <options>
+                <option value="ON">On</option>
+                <option value="OFF">Off</option>
+                <option value="SLAVE">Slave</option>
+            </options>
+        </state>       
+    </channel-type>
+    
+    <channel-type id="partyModeChannel">
+        <item-type>String</item-type>
+        <label>Party Mode</label>
+        <description>Party Mode setting for the zone</description>
+        <state>
+            <options>
+                <option value="ON">On</option>
+                <option value="OFF">Off</option>
+                <option value="MASTER">Master</option>
+            </options>
+        </state>       
+    </channel-type>
+    
+     <channel-type id="sharedSourceChannel">
+        <item-type>Switch</item-type>
+        <label>Shared Source</label>
+        <description>Shared source status for the zone</description>
+        <category>Switch</category>
+        <state readOnly="true"/>
+    </channel-type>
+   
+      <channel-type id="pageChannel">
+        <item-type>Switch</item-type>
+        <label>Page status</label>
+        <description>Page status for the zone</description>
+        <category>Switch</category>
+        <state readOnly="true"/>
+    </channel-type>
+    
+    <channel-type id="sleepTimeRemainingChannel">
+        <item-type>Number</item-type>
+        <label>Sleep Time</label>
+        <description>Time before zone goes to standby</description>
+        <state min="0" max="60" step="5"/>
+    </channel-type>
+    
+    
+    <channel-type id="sourceTypeChannel">
+        <item-type>String</item-type>
+        <label>Source Type</label>
+        <description>Type of the specified source</description>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="sourceNameChannel">
+        <item-type>String</item-type>
+        <label>Source Name</label>
+        <description>Name of the specified source</description>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="sourceComposerNameChannel">
+        <item-type>String</item-type>
+        <label>Composer Name</label>
+        <description>Composer of the now playing content on the specified source.</description>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="sourceChannelNameChannel">
+        <item-type>String</item-type>
+        <label>Channel Name</label>
+        <description>Channel name of the now playing content on the specified source.</description>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="sourceGenreChannel">
+        <item-type>String</item-type>
+        <label>Genre</label>
+        <description>Genre of the now playing content on the specified source.</description>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="sourceArtistNameChannel">
+        <item-type>String</item-type>
+        <label>Artist</label>
+        <description>Artist of the now playing content on the specified source.</description>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="sourceAlbumNameChannel">
+        <item-type>String</item-type>
+        <label>Album</label>
+        <description>Album of the now playing content on the specified source.</description>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="sourcePlaylistChannel">
+        <item-type>String</item-type>
+        <label>Playlist</label>
+        <description>Playlist for the now playing content on the specified source.</description>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="sourceSongNameChannel">
+        <item-type>String</item-type>
+        <label>sSong</label>
+        <description>Song for the now playing content on the specified source.</description>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="sourceCoverArtURLChannel">
+        <item-type>String</item-type>
+        <label>Cover Art URL</label>
+        <description>Cover Art URL for the now playing content on the specified source.</description>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="sourceChannelChannel">
+        <item-type>String</item-type>
+        <label>Channel</label>
+        <description>Channel (frequency) of the now playing content on the specified source.</description>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="sourceProgramServiceNameChannel">
+        <item-type>String</item-type>
+        <label>PSN</label>
+        <description>Program Service Name (PSN) of the now playing content on the specified source.</description>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="sourceRadioTextChannel">
+        <item-type>String</item-type>
+        <label>RadioText</label>
+        <description>radio text for the now playing content on the specified source.</description>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="sourceShuffleModeChannel">
+        <item-type>String</item-type>
+        <label>Shuffle</label>
+        <description>Shuffle mode for the now playing content on the specified source.</description>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="sourceRepeatModeChannel">
+        <item-type>String</item-type>
+        <label>Repeat</label>
+        <description>Repeat mode for the now playing content on the specified source.</description>
+        <state readOnly="true" />
+    </channel-type>    
+
+    <!-- Sample Thing Type -->
+    <thing-type id="controller">
+        <label>MCA-C Controller</label>
+        <description>The controller represents the Russound MCA-C Controller</description>
+
+        <channel-groups>
+            <channel-group id="system" typeId="systemChannelGroup" />
+
+            <channel-group id="zone1" typeId="zoneChannelGroup" />
+            <channel-group id="zone2" typeId="zoneChannelGroup" />
+            <channel-group id="zone3" typeId="zoneChannelGroup" />
+            <channel-group id="zone4" typeId="zoneChannelGroup" />
+            <channel-group id="zone5" typeId="zoneChannelGroup" />
+            <channel-group id="zone6" typeId="zoneChannelGroup" />
+            <channel-group id="zone7" typeId="zoneChannelGroup" />
+            <channel-group id="zone8" typeId="zoneChannelGroup" />
+            <channel-group id="zone9" typeId="zoneChannelGroup" />
+            <channel-group id="zone10" typeId="zoneChannelGroup" />
+            <channel-group id="zone11" typeId="zoneChannelGroup" />
+            <channel-group id="zone12" typeId="zoneChannelGroup" />
+            <channel-group id="zone13" typeId="zoneChannelGroup" />
+            <channel-group id="zone14" typeId="zoneChannelGroup" />
+            <channel-group id="zone15" typeId="zoneChannelGroup" />
+            <channel-group id="zone16" typeId="zoneChannelGroup" />
+
+            <channel-group id="source1" typeId="sourceChannelGroup" />
+            <channel-group id="source2" typeId="sourceChannelGroup" />
+            <channel-group id="source3" typeId="sourceChannelGroup" />
+            <channel-group id="source4" typeId="sourceChannelGroup" />
+            <channel-group id="source5" typeId="sourceChannelGroup" />
+            <channel-group id="source6" typeId="sourceChannelGroup" />
+            <channel-group id="source7" typeId="sourceChannelGroup" />
+            <channel-group id="source8" typeId="sourceChannelGroup" />
+        </channel-groups>
+        
+        <config-description>
+            <parameter name="address" type="text" required="true">
+                <label>IP or Host Name</label>
+                <description>The IP or host name of the MCA-C5</description>
+            </parameter>
+            <parameter name="port" type="integer" required="false" min="1" max="65335">
+                <label>RIO Port</label>
+                <description>The port to communicate with the controller</description>
+                <default>9621</default>
+            </parameter>
+            <parameter name="controllerCount" type="integer" required="false" min="1" max="8">
+                <label>Controller Count</label>
+                <description>The Controller Count in the Multiroom System</description>
+                <default>1</default>
+            </parameter>
+        </config-description>        
+
+    </thing-type>
+</thing:thing-descriptions>
