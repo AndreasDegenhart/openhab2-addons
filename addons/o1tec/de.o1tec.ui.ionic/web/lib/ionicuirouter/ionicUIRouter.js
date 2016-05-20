@@ -3,6 +3,11 @@ function checkState(check, state){
     var states = state.get();
     var foundAlternative = false;
     var currentState = state.current;
+
+    if (!currentState.views){
+        return setTo;
+    }
+
     var checkView = setTo+'_'+Object.keys(currentState.views)[0];
 
     for (var i=0;i<states.length;i++){
