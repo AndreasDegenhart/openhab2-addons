@@ -481,15 +481,21 @@ public class ZWaveThingHandler extends ConfigStatusThingHandler implements ZWave
             ZWaveSwitchAllCommandClass switchallCommandClass = (ZWaveSwitchAllCommandClass) node
                     .getCommandClass(CommandClass.SWITCH_ALL);
             if (switchallCommandClass != null) {
-                config.put(ZWaveBindingConstants.CONFIGURATION_SWITCHALLMODE, switchallCommandClass.getMode());
+                if (switchallCommandClass.getMode() != null) {
+                    config.put(ZWaveBindingConstants.CONFIGURATION_SWITCHALLMODE, switchallCommandClass.getMode());
+                }
             }
 
             // Process NODE_NAMING
             ZWaveNodeNamingCommandClass nodenamingCommandClass = (ZWaveNodeNamingCommandClass) node
                     .getCommandClass(CommandClass.NODE_NAMING);
             if (nodenamingCommandClass != null) {
-                config.put(ZWaveBindingConstants.CONFIGURATION_NODELOCATION, nodenamingCommandClass.getLocation());
-                config.put(ZWaveBindingConstants.CONFIGURATION_NODENAME, nodenamingCommandClass.getName());
+                if (nodenamingCommandClass.getLocation() != null) {
+                    config.put(ZWaveBindingConstants.CONFIGURATION_NODELOCATION, nodenamingCommandClass.getLocation());
+                }
+                if (nodenamingCommandClass.getName() != null) {
+                    config.put(ZWaveBindingConstants.CONFIGURATION_NODENAME, nodenamingCommandClass.getName());
+                }
             }
 
             // Only update if configuration has changed
@@ -1217,6 +1223,13 @@ public class ZWaveThingHandler extends ConfigStatusThingHandler implements ZWave
 
                     // Update property information about this device
                     Map<String, String> properties = editProperties();
+
+                    properties.put(ZWaveBindingConstants.PROPERTY_MANUFACTURER,
+                            Integer.toString(node.getManufacturer()));
+                    properties.put(ZWaveBindingConstants.PROPERTY_DEVICETYPE, Integer.toString(node.getDeviceType()));
+                    properties.put(ZWaveBindingConstants.PROPERTY_DEVICEID, Integer.toString(node.getDeviceId()));
+                    properties.put(ZWaveBindingConstants.PROPERTY_VERSION, node.getApplicationVersion());
+
                     properties.put(ZWaveBindingConstants.PROPERTY_CLASS_BASIC,
                             node.getDeviceClass().getBasicDeviceClass().toString());
                     properties.put(ZWaveBindingConstants.PROPERTY_CLASS_GENERIC,
