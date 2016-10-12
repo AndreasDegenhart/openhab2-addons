@@ -24,14 +24,15 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.o1tec.binding.russmca.protocol.RussCommand;
 import de.o1tec.binding.russmca.protocol.RussConnection;
 import de.o1tec.binding.russmca.protocol.event.RussDisconnectionEvent;
 import de.o1tec.binding.russmca.protocol.event.RussDisconnectionListener;
 import de.o1tec.binding.russmca.protocol.event.RussStatusUpdateEvent;
 import de.o1tec.binding.russmca.protocol.event.RussUpdateListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -196,6 +197,15 @@ public class RussRioConnection implements RussConnection {
         }
     }
 
+    protected void reconnect() {
+        close();
+        try {
+            openConnection();
+        } catch (IOException ioException) {
+            logger.error("Error occured when reconnecting", ioException);
+        }
+    }
+
     @Override
     public String getConnectionName() {
         return receiverHost + ":" + receiverPort;
@@ -223,6 +233,9 @@ public class RussRioConnection implements RussConnection {
 
             } catch (IOException ioException) {
                 logger.error("Error occured when sending command", ioException);
+
+                logger.debug("Trying to reconnect !");
+                reconnect();
             }
 
             logger.debug("Command sent to Russound Controller @{}: {}", getConnectionName(), command);
