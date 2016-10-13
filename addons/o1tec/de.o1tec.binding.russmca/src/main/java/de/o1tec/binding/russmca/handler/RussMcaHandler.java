@@ -23,6 +23,9 @@ import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.types.Command;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.o1tec.binding.russmca.RussMcaBindingConstants;
 import de.o1tec.binding.russmca.internal.states.ResponseStateValues;
 import de.o1tec.binding.russmca.protocol.CommandTypeNotSupportedException;
@@ -34,8 +37,6 @@ import de.o1tec.binding.russmca.service.RussMcaService.OnOff;
 import de.o1tec.binding.russmca.service.RussMcaService.OnOffMaster;
 import de.o1tec.binding.russmca.service.event.RussResponseEvent;
 import de.o1tec.binding.russmca.service.event.RussResponseListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The {@link RussMcaHandler} is responsible for handling commands, which are sent to one of the channels through
@@ -146,7 +147,7 @@ public class RussMcaHandler extends BaseThingHandler implements RussResponseList
                 handleSourceCommand(command, source, cmd);
             }
         } else if (channelSystemMatcher.matches()) {
-            String cmd = channelSourceMatcher.group(1);
+            String cmd = channelSystemMatcher.group(1);
             handleSystemCommand(command, cmd);
         }
 
@@ -163,6 +164,9 @@ public class RussMcaHandler extends BaseThingHandler implements RussResponseList
             switch (channel) {
                 case RussMcaBindingConstants.CHANNEL_POWER:
                     sendZonePowerCommand(zone, command);
+                    break;
+                case RussMcaBindingConstants.CHANNEL_CURRENT_SOURCE:
+                    sendZoneSourceCommand(zone, command);
                     break;
                 case RussMcaBindingConstants.CHANNEL_MUTE:
                     russService.toggleMute(zone);
@@ -241,6 +245,15 @@ public class RussMcaHandler extends BaseThingHandler implements RussResponseList
     public boolean sendZonePowerCommand(int zone, Command command) throws CommandTypeNotSupportedException {
         if (command instanceof OnOffType) {
             return russService.zonePower(zone, OnOffType.ON == command);
+        } else {
+            throw new CommandTypeNotSupportedException("Command type not supported.");
+        }
+    }
+
+    public boolean sendZoneSourceCommand(int zone, Command command) throws CommandTypeNotSupportedException {
+        if (command instanceof DecimalType) {
+            int source = ((DecimalType) command).intValue();
+            return russService.zoneSource(zone, source);
         } else {
             throw new CommandTypeNotSupportedException("Command type not supported.");
         }

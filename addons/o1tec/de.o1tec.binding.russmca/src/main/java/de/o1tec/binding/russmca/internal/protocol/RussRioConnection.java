@@ -110,8 +110,11 @@ public class RussRioConnection implements RussConnection {
 
     @Override
     public boolean connect() {
+        return forceConnect(false);
+    }
 
-        if (!isConnected()) {
+    protected boolean forceConnect(boolean force) {
+        if (force || !isConnected()) {
             try {
                 openConnection();
 
@@ -198,12 +201,11 @@ public class RussRioConnection implements RussConnection {
     }
 
     protected void reconnect() {
+        logger.debug("try reconnecting...");
         close();
-        try {
-            openConnection();
-        } catch (IOException ioException) {
-            logger.error("Error occured when reconnecting", ioException);
-        }
+        logger.debug("closed connection");
+        boolean isConnected = forceConnect(true);
+        logger.debug("open connection, returns {}", isConnected);
     }
 
     @Override
