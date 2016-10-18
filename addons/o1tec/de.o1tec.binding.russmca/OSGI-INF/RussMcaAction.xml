@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2015-2016 by the respective copyright holders.
+
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License v1.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html
+
+-->
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.o1tec.action.russmca">
+   <implementation class="de.o1tec.binding.russmca.internal.actions.RussMcaActionService"/>
+   <service>
+      <provide interface="org.eclipse.smarthome.model.script.engine.action.ActionService"/>
+   </service>
+   <reference bind="setRussMcaService" cardinality="1..1" interface="de.o1tec.binding.russmca.service.RussMcaService"  name="RussMcaService" policy="static" unbind="unsetRussMcaService" />
+</scr:component>
