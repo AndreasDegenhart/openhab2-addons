@@ -12,7 +12,7 @@ public class RussMca {
     private static final Logger logger = LoggerFactory.getLogger(RussMca.class);
 
     @ActionDoc(text = "querys the ip adress of a specific controller")
-    public static void playSound(@ParamDoc(name = "controller", text = "the controller number") int controller) {
+    public static void queryControllerIpAddress(@ParamDoc(name = "controller", text = "the controller number") int controller) {
         RussMcaActionService.russMcaService.queryControllerIpAddress(controller);
     }
 
