@@ -19,7 +19,9 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.DatatypeConverter;
@@ -75,6 +77,8 @@ public class RussRioConnection implements RussConnection {
     private IpControlInputStreamReader inputStreamReader;
     private DataOutputStream outputStream;
 
+    private BlockingQueue<String> rioSendingQueue = new LinkedBlockingQueue<>();
+
     public RussRioConnection(String receiverHost) {
         this(receiverHost, null, null);
     }
@@ -92,6 +96,10 @@ public class RussRioConnection implements RussConnection {
     protected RussRioConnection() {
         this.updateListeners = new ArrayList<>();
         this.disconnectionListeners = new ArrayList<>();
+
+        // start sending thread
+        Thread consThread = new RioSendingThread(rioSendingQueue);
+        consThread.start();
     }
 
     @Override
@@ -220,10 +228,44 @@ public class RussRioConnection implements RussConnection {
      *            the command to send.
      **/
     @Override
+    // public boolean sendCommand(RussCommand ipControlCommand) {
+    // boolean isSent = false;
+    // if (connect()) {
+    // String command = ipControlCommand.getCommand();
+    // try {
+    // if (logger.isTraceEnabled()) {
+    // logger.trace("Sending {} bytes: {}", command.length(),
+    // DatatypeConverter.printHexBinary(command.getBytes()));
+    // }
+    // outputStream.writeBytes(command);
+    // outputStream.flush();
+    // isSent = true;
+    //
+    // } catch (IOException ioException) {
+    // logger.error("Error occured when sending command", ioException);
+    //
+    // logger.debug("Trying to reconnect !");
+    // reconnect();
+    // }
+    //
+    // logger.debug("Command sent to Russound Controller @{}: {}", getConnectionName(), command);
+    // }
+    //
+    // return isSent;
+    // }
     public boolean sendCommand(RussCommand ipControlCommand) {
+        String command = ipControlCommand.getCommand();
+        try {
+            rioSendingQueue.put(command);
+        } catch (InterruptedException e) {
+            logger.error("Error occured when sending command", e);
+        }
+        return true;
+    }
+
+    public boolean sendCommand(String command) {
         boolean isSent = false;
         if (connect()) {
-            String command = ipControlCommand.getCommand();
             try {
                 if (logger.isTraceEnabled()) {
                     logger.trace("Sending {} bytes: {}", command.length(),
@@ -333,6 +375,39 @@ public class RussRioConnection implements RussConnection {
             }
         }
 
+    }
+
+    /**
+     * Thread for sending commands
+     *
+     * dieser thread wurde eingeführt, da bei vileen Kommandos hintereinander der Russond Controller Events verschluckt.
+     * Wir warten daher immer 200 ms nach einem Event, bevor das nächste geschickt wird
+     * 
+     * @author andy
+     *
+     */
+    private class RioSendingThread extends Thread {
+
+        private final BlockingQueue<String> sharedQueue;
+
+        public RioSendingThread(BlockingQueue<String> sharedQueue) {
+            this.sharedQueue = sharedQueue;
+            this.setDaemon(true);
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    String cmd = sharedQueue.take();
+                    sendCommand(cmd);
+                    Thread.sleep(200);
+
+                } catch (InterruptedException ex) {
+                    logger.error("Error occured when sending command", ex);
+                }
+            }
+        }
     }
 
 }
