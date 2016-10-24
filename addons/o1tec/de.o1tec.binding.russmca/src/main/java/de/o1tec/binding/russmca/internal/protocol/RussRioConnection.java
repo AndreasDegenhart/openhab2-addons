@@ -77,7 +77,9 @@ public class RussRioConnection implements RussConnection {
     private IpControlInputStreamReader inputStreamReader;
     private DataOutputStream outputStream;
 
-    private BlockingQueue<String> rioSendingQueue = new LinkedBlockingQueue<>();
+    private RioSendingThread rioSendingThread;
+
+    private BlockingQueue<String> rioSendingQueue = new LinkedBlockingQueue<>(100);
 
     public RussRioConnection(String receiverHost) {
         this(receiverHost, null, null);
@@ -98,8 +100,8 @@ public class RussRioConnection implements RussConnection {
         this.disconnectionListeners = new ArrayList<>();
 
         // start sending thread
-        Thread consThread = new RioSendingThread(rioSendingQueue);
-        consThread.start();
+        rioSendingThread = new RioSendingThread(rioSendingQueue);
+        rioSendingThread.start();
     }
 
     @Override
@@ -197,6 +199,7 @@ public class RussRioConnection implements RussConnection {
             inputStreamReader = null;
             logger.debug("Stream reader stopped!");
         }
+
         try {
             if (ipControlSocket != null) {
                 ipControlSocket.close();
@@ -382,7 +385,7 @@ public class RussRioConnection implements RussConnection {
      *
      * dieser thread wurde eingeführt, da bei vileen Kommandos hintereinander der Russond Controller Events verschluckt.
      * Wir warten daher immer 200 ms nach einem Event, bevor das nächste geschickt wird
-     * 
+     *
      * @author andy
      *
      */
@@ -390,14 +393,21 @@ public class RussRioConnection implements RussConnection {
 
         private final BlockingQueue<String> sharedQueue;
 
+        private volatile boolean stopThread = false;
+
+        // This latch is used to block the stop method until the reader is really stopped.
+        private CountDownLatch stopLatch;
+
         public RioSendingThread(BlockingQueue<String> sharedQueue) {
             this.sharedQueue = sharedQueue;
+            this.stopLatch = new CountDownLatch(1);
+
             this.setDaemon(true);
         }
 
         @Override
         public void run() {
-            while (true) {
+            while (!stopThread && !Thread.currentThread().isInterrupted()) {
                 try {
                     String cmd = sharedQueue.take();
                     sendCommand(cmd);
@@ -407,7 +417,24 @@ public class RussRioConnection implements RussConnection {
                     logger.error("Error occured when sending command", ex);
                 }
             }
+            // Notify the stopReader method caller that the reader is stopped.
+            this.stopLatch.countDown();
         }
+
+        /**
+         * Stop this reader. Block until the reader is really stopped.
+         */
+        public void stopThread() {
+            this.stopThread = true;
+            try {
+                this.stopLatch.await(1000, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                // Do nothing. The timeout is just here for safety and to be sure that the call to this method will not
+                // block the caller indefinitely.
+                // This exception should never happen.
+            }
+        }
+
     }
 
 }
