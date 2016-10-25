@@ -69,7 +69,7 @@ public class RussRioConnection implements RussConnection {
     private String receiverHost;
     private Socket ipControlSocket;
 
-    private boolean[] bZoneWatched;
+    // private boolean[] bZoneWatched;
 
     private List<RussUpdateListener> updateListeners;
     private List<RussDisconnectionListener> disconnectionListeners;
@@ -92,7 +92,7 @@ public class RussRioConnection implements RussConnection {
         this.numControllers = numControllers != null && numControllers >= 1 ? numControllers
                 : DEFAULT_NUMBER_OF_CONTROLLERS;
 
-        bZoneWatched = new boolean[this.numControllers * MCAC5_ZONE_COUNT];
+        // bZoneWatched = new boolean[this.numControllers * MCAC5_ZONE_COUNT];
     }
 
     protected RussRioConnection() {
@@ -136,9 +136,9 @@ public class RussRioConnection implements RussConnection {
                 outputStream = new DataOutputStream(getOutputStream());
 
                 // initialize zone watched array
-                for (int i = 0; i < this.numControllers * MCAC5_ZONE_COUNT; i++) {
-                    bZoneWatched[i] = false;
-                }
+                // for (int i = 0; i < this.numControllers * MCAC5_ZONE_COUNT; i++) {
+                // bZoneWatched[i] = false;
+                // }
             } catch (IOException ioException) {
                 logger.debug("Can't connect to {}. Cause: {}", getConnectionName(), ioException.getMessage());
             }
@@ -353,8 +353,9 @@ public class RussRioConnection implements RussConnection {
                 }
 
             } catch (IOException e) {
-                logger.warn("The Russound Controller @{} is disconnected.", getConnectionName(), e);
-                RussDisconnectionEvent event = new RussDisconnectionEvent(RussRioConnection.this, e);
+                logger.error("The Russound Controller @{} is disconnected.", getConnectionName(), e);
+            } finally {
+                RussDisconnectionEvent event = new RussDisconnectionEvent(RussRioConnection.this, null);
                 for (RussDisconnectionListener russDisconnectionListener : disconnectionListeners) {
                     russDisconnectionListener.onDisconnection(event);
                 }

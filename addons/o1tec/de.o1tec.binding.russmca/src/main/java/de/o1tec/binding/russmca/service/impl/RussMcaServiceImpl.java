@@ -3,6 +3,10 @@ package de.o1tec.binding.russmca.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.osgi.service.component.ComponentContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.o1tec.binding.russmca.RussMcaBindingConstants;
 import de.o1tec.binding.russmca.internal.protocol.AdjustCommand.AdjustCommandType;
 import de.o1tec.binding.russmca.internal.protocol.EventCommand.EventCommandType;
@@ -22,9 +26,6 @@ import de.o1tec.binding.russmca.protocol.event.RussUpdateListener;
 import de.o1tec.binding.russmca.service.RussMcaService;
 import de.o1tec.binding.russmca.service.event.RussResponseEvent;
 import de.o1tec.binding.russmca.service.event.RussResponseListener;
-import org.osgi.service.component.ComponentContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RussMcaServiceImpl implements RussMcaService, RussUpdateListener, RussDisconnectionListener {
 
@@ -622,8 +623,10 @@ public class RussMcaServiceImpl implements RussMcaService, RussUpdateListener, R
 
     @Override
     public void onDisconnection(RussDisconnectionEvent event) {
-        // TODO Auto-generated method stub
-
+        logger.error("onDisconnection called => reset zone watched");
+        for (int i = 0; i < bZoneWatched.length; i++) {
+            bZoneWatched[i] = false;
+        }
     }
 
     @Override
